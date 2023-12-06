@@ -114,6 +114,7 @@ function App() {
         <div className={isprank ? "display prank" : "display"}>
           {strToDisplay}
         </div>
+
         {BUTTONS.map((button) => {
           return (
             <CustomButton
