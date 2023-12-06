@@ -1,102 +1,18 @@
 import "./App.css";
-// import "./style.css";
-import "./prank.wav";
+import prankSound from "./prank.wav";
 
 import React, { useState } from "react";
 import Calculater from "./Calculater";
 import CustomButton from "./components/CustomButton";
+import { BUTTONS } from "./utils";
 
 function App() {
-  const displayElem = document.querySelector(".display");
-
-  let [strToDisplay, setStrToDisplay] = useState("");
-  // let strToDisplay = "";
+  const [strToDisplay, setStrToDisplay] = useState("");
+  const [isprank, setIsPrank] = useState(false);
+  const [lastOperator, setLastOperator] = useState("");
   const operators = ["+", "-", "*", "/", "%"];
-  const BUTTONS = [
-    {
-      cls: "btn btn-ac",
-      label: "AC",
-    },
-    {
-      cls: "btn btn-c",
-      label: "C",
-    },
-    {
-      cls: "btn btn-per",
-      label: "%",
-    },
-    {
-      cls: "btn btn-plus",
-      label: "+",
-    },
-    {
-      cls: "btn btn-minus",
-      label: "-",
-    },
-    {
-      cls: "btn btn-x",
-      label: "*",
-    },
-    {
-      cls: "btn btn-dot",
-      label: ".",
-    },
-    {
-      cls: "btn btn-divide",
-      label: "/",
-    },
-    {
-      cls: "btn btn-equals",
-      label: "=",
-    },
-    {
-      cls: "btn btn-1",
-      label: "1",
-    },
-    {
-      cls: "btn btn-2",
-      label: "2",
-    },
-    {
-      cls: "btn btn-3",
-      label: "3",
-    },
-    {
-      cls: "btn btn-4",
-      label: "4",
-    },
-    {
-      cls: "btn btn-5",
-      label: "5",
-    },
-    {
-      cls: "btn btn-6",
-      label: "6",
-    },
-    {
-      cls: "btn btn-4",
-      label: "4",
-    },
-    {
-      cls: "btn btn-7",
-      label: "7",
-    },
-    {
-      cls: "btn btn-8",
-      label: "8",
-    },
-    {
-      cls: "btn btn-9",
-      label: "9",
-    },
-    {
-      cls: "btn btn-0",
-      label: "0",
-    },
-  ];
 
-  let lastOperator = "";
-  const audio = new Audio("./prank.wav");
+  const audio = new Audio(prankSound);
 
   // generate random number between 1 -10
   const randomNumber = () => {
@@ -105,7 +21,8 @@ function App() {
   };
 
   const handleClick = (value) => {
-    displayElem?.classList.remove("prank");
+    console.log(value);
+    setIsPrank(false);
     // Clear Screen
     if (value === "AC") {
       setStrToDisplay("");
@@ -155,7 +72,7 @@ function App() {
 
     // Operator conditions
     if (operators.includes(value)) {
-      lastOperator = value;
+      setLastOperator(value);
       const lastChar = strToDisplay.slice(-1);
       if (operators.includes(lastChar)) {
         return;
@@ -182,9 +99,8 @@ function App() {
     let totalNumber = eval(strToDisplay);
     //   Prank Case
     if (random < 4) {
-      displayElem.classList.add("prank");
-      console.log(audio);
-      // audio.play();
+      setIsPrank(true);
+      audio.play();
       totalNumber += random;
     }
     setStrToDisplay(totalNumber.toString());
@@ -195,13 +111,16 @@ function App() {
       <h1>Prank Calculator</h1>
       <small>Disclaimer: Ans might be incorrect in case you are pranked</small>
       <div className="calculator">
-        <div className="display">0.00</div>
+        <div className={isprank ? "display prank" : "display"}>
+          {strToDisplay}
+        </div>
         {BUTTONS.map((button) => {
           return (
             <CustomButton
               key={button.label}
               cls={button.cls}
               label={button.label}
+              clickHandler={handleClick}
             />
           );
         })}
